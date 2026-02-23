@@ -1,95 +1,199 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: "Mandatory pre-implementation design workflow. Must be fully completed before any implementation skill is invoked."
 ---
 
-# Brainstorming Ideas Into Designs
+# Brainstorming Design Protocol (State-Driven)
 
-## Overview
+## CORE RULE
 
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
+This is a strict state machine workflow.
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
+The process MUST reach the terminal state:
+→ Invoke writing-plans
 
-<HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
-</HARD-GATE>
+It is illegal to:
+- Skip a state
+- Reorder states
+- Exit early
+- Implement anything
+- Invoke any skill other than writing-plans
 
-## Anti-Pattern: "This Is Too Simple To Need A Design"
+---
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+# STATE MACHINE
 
-## Checklist
+Current state must always be explicit internally.
 
-You MUST create a task for each of these items and complete them in order:
+States:
 
-1. **Explore project context** — check files, docs
-2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-3. **Propose 2-3 approaches** — with trade-offs and your recommendation
-4. **Present design** — in sections scaled to their complexity, get user approval after each section
-5. **Write/Update design doc** — save to `docs/plans/YYYY-MM-DD-<topic>-design.md` 
-6. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+S1 → Explore project context
+S2 → Ask clarifying questions
+S3 → Propose 2–3 approaches
+S4 → Present design sections (incremental validation)
+S5 → Write/Update design doc
+S6 → Invoke writing-plans (TERMINAL)
 
-## Process Flow
+Transitions are strictly linear.
 
-```dot
-digraph brainstorming {
-    "Explore project context" [shape=box];
-    "Ask clarifying questions" [shape=box];
-    "Propose 2-3 approaches" [shape=box];
-    "Present design sections" [shape=box];
-    "User approves design?" [shape=diamond];
-    "Write/Update design doc" [shape=box];
-    "Invoke writing-plans skill" [shape=doublecircle];
+You cannot:
+- Go to S3 without completing S2
+- Go to S4 without S3
+- Go to S5 without explicit user approval
+- Skip S5
+- End in S4
 
-    "Explore project context" -> "Ask clarifying questions";
-    "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
-    "Present design sections" -> "User approves design?";
-    "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Invoke writing-plans skill";
-}
-```
+Terminal state is S6 only.
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+---
 
-## The Process
+# HARD GATE
 
-**Understanding the idea:**
-- Check out the current project state first (files, docs)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+Until state S6:
 
-**Exploring approaches:**
-- Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
-- Lead with your recommended option and explain why
+- No code
+- No scaffolding
+- No configs
+- No partial implementation
+- No frontend-design
+- No mcp-builder
+- No writing-plans early
 
-**Presenting the design:**
-- Once you believe you understand what you're building, present the design
-- Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
-- Cover: requirements, architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
+If the user tries to implement early:
+→ You must redirect back to the current state.
 
-## After the Design
+---
 
-**Documentation:**
-- Write/Update the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- Use writing-clearly-and-concisely skill if available
+# EXECUTION RULES PER STATE
 
-**Implementation:**
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+## S1 – Explore Context
+- Check files, docs, existing architecture
+- Summarize relevant findings
+- Then move to S2
 
-## Key Principles
+---
 
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design, get approval before moving on
-- **Be flexible** - Go back and clarify when something doesn't make sense
+## S2 – Clarifying Questions
+- Exactly ONE question per message
+- Prefer multiple choice
+- Focus on:
+  - Purpose
+  - Constraints
+  - Success criteria
+- Remain in S2 until:
+  - All ambiguity resolved
+  - You explicitly decide clarity is sufficient
+
+Then transition to S3.
+
+---
+
+## S3 – Propose 2–3 Approaches
+- Always present 2–3 viable approaches
+- Include:
+  - Trade-offs
+  - Risks
+  - Complexity level
+  - Scalability
+- Lead with recommended option
+- Ask user to choose
+
+Do NOT present final design here.
+
+After user selects → transition to S4.
+
+---
+
+## S4 – Present Design (Sectional)
+
+Design must include sections:
+
+1. Requirements
+2. Architecture
+3. Components
+4. Data Flow
+5. Error Handling
+6. Testing Strategy
+
+Each section:
+- 50–300 words depending on complexity
+- After each section:
+  Ask: “Does this look correct so far?”
+
+If user says no:
+→ Revise and remain in S4
+
+If user says yes to ALL sections:
+→ Transition to S5
+
+You must never exit S4 without full approval.
+
+---
+
+## S5 – Write Design Document
+
+Mandatory:
+
+Write to:
+docs/plans/YYYY-MM-DD-<topic>-design.md
+
+Design doc must include:
+- Context
+- Decision rationale
+- Chosen approach
+- Rejected alternatives
+- Final architecture
+- Open questions (if any)
+
+No summary-only shortcut allowed.
+
+After writing:
+→ Transition to S6
+
+---
+
+## S6 – Invoke writing-plans (TERMINAL)
+
+This is the ONLY allowed skill invocation after brainstorming.
+
+No other skill may be called.
+
+After invoking writing-plans:
+Brainstorming is complete.
+
+---
+
+# FAILURE PREVENTION RULES
+
+If:
+- User requests code early
+- User says “just implement”
+- User says “skip design”
+
+You must respond:
+
+"This workflow requires design approval before implementation. Let's continue the current stage."
+
+No exceptions.
+
+---
+
+# Anti-Pattern Prevention
+
+It is forbidden to skip this workflow because a project appears simple.
+
+Even:
+- A config tweak
+- A helper function
+- A rename
+- A one-line change
+
+Must complete S1–S6.
+
+---
+
+# END CONDITION
+
+The ONLY valid completion of brainstorming is:
+
+→ writing-plans invoked
