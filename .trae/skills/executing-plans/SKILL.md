@@ -11,43 +11,84 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 
 **Core principle:** Batch execution with checkpoints for architect review.
 
+**Mandatory tracking rule:** Every single step must be tracked using the `planning-with-files` skill. No step may be executed without updating its status.
+
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
 ## The Process
 
 ### Step 1: Load and Review Plan
-1. Read plan file
-2. Review critically - identify any questions or concerns about the plan
-3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create TodoWrite and proceed
+1. Read plan file  
+   - Record status in `planning-with-files` as: `In Progress`
+   - After reading, update to: `Completed`
+
+2. Review critically  
+   - Record status as: `In Progress`
+   - Identify questions, risks, inconsistencies, or missing details
+   - If review complete, update to: `Completed`
+   - If blocked, update to: `Blocked` (include reason)
+
+3. If concerns exist:
+   - Record clarification task as `Blocked`
+   - Raise issues with human partner before starting
+   - Do NOT proceed until resolved
+
+4. If no concerns:
+   - Create TodoWrite
+   - Record creation as `Completed`
+   - Proceed to execution
 
 ### Step 2: Execute Batch
 **Default: First 3 tasks**
 
 For each task:
-1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+1. Mark task as `In Progress` using `planning-with-files`
+2. Execute each step exactly as written (bite-sized steps)
+   - Before starting each step → mark step `In Progress`
+   - After finishing → mark step `Completed`
+   - If failure → mark `Blocked` with reason
+3. Run verifications exactly as specified
+   - Mark verification step `In Progress`
+   - After execution:
+     - If success → `Completed`
+     - If failure → `Blocked` and STOP execution
+4. When entire task is done → mark task `Completed`
+
+⚠️ No task or sub-step may be executed without status tracking.
 
 ### Step 3: Report
 When batch complete:
+- Ensure all related steps are marked appropriately in `planning-with-files`
 - Show what was implemented
 - Show verification output
-- Say: "Ready for feedback."
+- Say:  
+  "Ready for feedback."
+
+Wait for feedback before continuing.
 
 ### Step 4: Continue
 Based on feedback:
-- Apply changes if needed
+- If changes required:
+  - Add/update steps in `planning-with-files`
+  - Mark modified steps appropriately
 - Execute next batch
+- Track every single step status
 - Repeat until complete
 
 ### Step 5: Complete Development
 
 After all tasks complete and verified:
-- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
-- Follow that skill to verify tests, present options, execute choice
+
+1. Verify all plan steps are marked `Completed`
+2. Announce:
+   "I'm using the finishing-a-development-branch skill to complete this work."
+3. **REQUIRED SUB-SKILL:** Use `superpowers:finishing-a-development-branch`
+4. Track each finishing step using `planning-with-files`
+5. Follow the skill to:
+   - Verify tests
+   - Present options
+   - Execute selected option
+6. Mark final state as `Completed`
 
 ## When to Stop and Ask for Help
 
@@ -72,6 +113,7 @@ After all tasks complete and verified:
 - Follow plan steps exactly
 - Don't skip verifications
 - Reference skills when plan says to
+- Track EVERY step in `planning-with-files`
 - Between batches: just report and wait
 - Stop when blocked, don't guess
 - Never start implementation on main/master branch without explicit user consent
@@ -79,6 +121,7 @@ After all tasks complete and verified:
 ## Integration
 
 **Required workflow skills:**
-- **superpowers:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
+- **planning-with-files**  
+  REQUIRED: Must be used for every single step, sub-step, verification, clarification, and completion state update. No exceptions.
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks
